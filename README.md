@@ -22,58 +22,94 @@ The app allows you to:
 - React frontend to **fetch & display books**
 - Error handling and validations
 
+## Prerequisites
 
-## 🛠️ Setup Instructions
+### 1. Install Docker Desktop
+
+- Windows: Download here https://www.docker.com/products/docker-desktop  and install.
+- Make sure WSL2 integration is enabled.
+- macOS: Download here https://www.docker.com/products/docker-desktop and install.
+
+After installation, verify with:
+    ``` bash
+    docker --version
+    docker compose version
+    ```
+Both should return a version number.
+
+## Running the App with Docker
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/library-app.git
-cd library-app
-```
-### 2. Setup Backend (FastAPI + PostgreSQL)
-
-1. Create and activate a virtual environment:
-```
-cd backend
-python -m venv venv
-source venv/bin/activate   # on macOS/Linux
-venv\Scripts\activate      # on Windows
-```
-2. Install dependencies:
-```
-pip install fastapi uvicorn psycopg2 sqlalchemy alembic pydantic
+git clone https://github.com/hramc/libraryApp.git
+cd libraryApp
 ```
 
-3. Setup PostgreSQL and update your database.py with DB connection in the app.properties file
+### 2. Build and start containers
+
+#### 1. Create and activate a virtual environment:
+```
+docker compose up --build
+```
+
+This will start:
+
+- postgres_db → Postgres database 
+- fastapi_backend → FastAPI backend (http://localhost:8000)
+- react_frontend → React frontend served by Nginx (http://localhost:3000)
+
+#### 2. Access the services
+   - Frontend → http://localhost:3000
+   - Backend API docs (Swagger UI) → http://localhost:8000/docs
+   - Database (optional) → Connect using any client at:
+   
+#### 3. Access the services
+- Frontend → http://localhost:3000
+- Backend API docs (Swagger UI) → http://localhost:8000/docs
+- Database (optional) → Connect using any client at:
+
+```
+Host: localhost
+Port: 5432
+User: admin
+Password: admin
+Database: librarydb
+```
+
+### Stopping the App
+To stop containers but keep data:
+```
+docker compose down
+```
+To stop and remove all data (fresh start):
+```
+docker compose down -v
+```
+### Useful Commands
+
+Rebuild containers after code changes:
+```
+docker compose up --build
+```
+
+Check container logs:
+```
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f db
+```
+
+Access DB inside container:
+```
+docker exec -it postgres_db psql -U admin -d librarydb
+```
+
+Setup PostgreSQL and update your database.py with DB connection in the app.properties file
 ```
 SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost:5432/library"
 ```
 
-4. Run Alembic migrations:
+Run Alembic migrations:
 ```
 alembic upgrade head
 ```
-
-5. Start FastAPI server:
-```
-uvicorn main:app --reload
-```
-
-Backend runs at: http://127.0.0.1:8000
-
-### 3. Setup Frontend (React)
-
-1. Install dependencies:
-```
-cd frontend
-npm install
-```
-
-2. Start development server:
-```
-npm start
-```
-
-Frontend runs at: http://localhost:3000
-
-
