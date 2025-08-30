@@ -1,0 +1,32 @@
+erDiagram
+    CLASSES {
+        string id PK
+        string name
+        string teacherName
+    }
+
+    STUDENT {
+        string id PK
+        string name
+        string classId FK
+    }
+
+    BOOK {
+        string id PK
+        string name
+        string author
+    }
+
+    TRANSACTION {
+        string id PK
+        string classId FK
+        string studentId FK
+        string bookId FK
+        date takenDate
+        date returnDate
+        string status
+    }
+
+    CLASSES ||--o{ STUDENT : "has"
+    STUDENT ||--o{ TRANSACTION : "makes"
+    BOOK ||--o{ TRANSACTION : "appears_in"
